@@ -1,0 +1,87 @@
+extends CharacterBody2D
+
+
+@onready var animation: AnimatedSprite2D = $AnimatedSprite2D
+
+@export var speed = 100.0
+@export var friction = 50.0
+@export var max_walking_speed = 50.0
+var direction = 0
+@export var PLAYER_ROTATION = 6
+
+func _physics_process(delta: float):
+	
+	if(Input.is_action_pressed("left") and !Input.is_action_pressed("right")):
+		direction_process(delta, -1)
+		if(direction == -1 or direction == 1):
+			velocity.x -= speed * delta
+		if(velocity.x <= -max_walking_speed):
+			velocity.x = -max_walking_speed
+	
+	if(Input.is_action_pressed("right") and !Input.is_action_pressed("left")):
+		direction_process(delta, 1)
+		velocity.x += speed * delta
+		if(velocity.x >= max_walking_speed):
+			velocity.x = max_walking_speed
+	
+	if(Input.is_action_just_released("left") or Input.is_action_just_released("right")):
+		if(velocity.x > 0):
+			velocity.x = 0.5
+		if(velocity.x < 0):
+			velocity.x = -0.5
+	
+	animation_process()
+	moving_process(delta)
+	friction_process(delta)
+	#velocity.x = direction * speed * delta
+	print("Player Velocity: "+str(velocity.x)+"\n"+ "Player Direction: " + str(direction))
+	move_and_slide()
+
+func friction_process(delta):
+	var difference = 0 - abs(velocity.x)
+	if(difference != 0):
+		if(velocity.x < 0):
+			velocity.x += friction * delta
+		if(velocity.x > 0):
+			velocity.x -= friction * delta
+	velocity.x = round(velocity.x)
+
+func direction_process(delta, direct):
+	if(direct == -1):
+		if(direction > -1):
+			direction += -PLAYER_ROTATION * delta
+		elif(direction < -1):
+			direction = -1
+		else:
+			direction = -1
+	if(direct == 1):	
+		if(direction < 1):
+			direction += PLAYER_ROTATION * delta
+		elif(direction > 1):
+			direction = 1
+		else:
+			direction = 1
+
+#Animation
+func animation_process():
+	
+	if(direction > 0.2 and direction < 1):
+		animation.play("Idle_half_right")
+	if(direction == 1 and velocity.x == 0):
+		animation.play("Idle_right")
+		
+	if(direction < -0.2 and direction > -1):
+		animation.play("Idle_half_left")
+	if(direction == -1 and velocity.x == 0):
+		animation.play("Idle_left")
+	
+	if(velocity.x == 0):
+		if(direction > -0.2 and direction < 0.2):
+			animation.play("Idle")
+
+func moving_process(delta):
+
+	if(direction == 1 and velocity.x > 0):
+		animation.play("walk_right")
+	if(direction == -1 and velocity.x < 0):
+		animation.play("walk_left")

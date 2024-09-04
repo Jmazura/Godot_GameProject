@@ -1,3 +1,44 @@
-[gd_scene format=3 uid="uid://doeg0lll7svgu"]
+[gd_scene load_steps=5 format=3 uid="uid://d0v7o1v2auihl"]
+
+[ext_resource type="PackedScene" uid="uid://cc05rk5676mmg" path="res://Scenes/Entities/player.tscn" id="1_0ma3e"]
+[ext_resource type="PackedScene" uid="uid://cb26vyphkovq1" path="res://Scenes/Entities/Enemy.tscn" id="2_h072e"]
+[ext_resource type="Texture2D" uid="uid://bx60245ix7m" path="res://Assets/bg.png" id="3_p52aa"]
+
+[sub_resource type="SegmentShape2D" id="SegmentShape2D_w55pg"]
+a = Vector2(103, 1)
+b = Vector2(-24, 1)
 
 [node name="Game" type="Node2D"]
+
+[node name="bg" type="Sprite2D" parent="."]
+position = Vector2(65, 48)
+texture = ExtResource("3_p52aa")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+texture_filter = 1
+position = Vector2(65, 58)
+zoom = Vector2(9, 9)
+
+[node name="Entities" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Player" parent="Entities" instance=ExtResource("1_0ma3e")]
+position = Vector2(63, 76)
+walk_speed = 1000
+
+[node name="Enemy" parent="Entities" instance=ExtResource("2_h072e")]
+position = Vector2(43, 74)
+
+[node name="Test" type="StaticBody2D" parent="."]
+position = Vector2(-15, 86)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Test"]
+position = Vector2(40, 9)
+shape = SubResource("SegmentShape2D_w55pg")
+
+[node name="Test2" type="StaticBody2D" parent="."]
+position = Vector2(1, 73)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Test2"]
+position = Vector2(23, 0)
+shape = SubResource("SegmentShape2D_w55pg")
